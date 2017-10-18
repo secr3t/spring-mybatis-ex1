@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sample.demo.mappers.EmployeeMapper2">
+
+	<select id="searchEmployees" parameterType="Criteria"
+		resultType="Employee">
+		select
+		employee_id as id,
+		first_name as firstName,
+		last_name as lastName,
+		phone_number as phoneNumber,
+		email,
+		hire_date as hireDate,
+		job_id as
+		jobId,
+		salary,
+		commission_pct as commissionPct,
+		manager_id as managerId,
+		department_id as departmentId
+		from
+		employees
+		<where>
+			<if test="opt != null">
+				<choose>
+					<when test="opt == 'name' and keyword != null">
+						first_name = #{keyword}
+					</when>
+					<when test="opt == 'job' and jobs != null">
+						job_id in
+						<foreach item="jobCode" index="index" collection="jobs"
+							open="(" separator="," close=")">
+							#{jobCode}
+						</foreach>
+					</when>
+				</choose>
+			</if>
+			<if test="depts != null">
+				and department_id in
+				<foreach item="deptno" index="index" collection="depts"
+					open="(" separator="," close=")">
+					#{deptno}
+				</foreach>
+			</if>
+			<if test="beginDate != null"> and hire_date >= #{beginDate} </if>
+			<if test="endDate != null"> and #{endDate} >= hire_date </if>
+			<if test="minSalary 	!= null"> and salary > #{minSalary} </if>
+ 			<if test="maxSalary != null"> and #{maxSalary} > salary </if> 
+		</where>
+	</select>
+
+</mapper>
